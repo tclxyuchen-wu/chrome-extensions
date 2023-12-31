@@ -891,7 +891,7 @@
 			}
 			return t()
 		};
-		(async (self) => {
+		const startWork = async (self) => {
 			const Worker = self.Worker
 			let instance
 			const channel = (({ sendPrefix, listenPrefix, cloneInto }) => {
@@ -1131,10 +1131,10 @@
 			})(namespaceInstance, userscripts, {
 				get: async (e, t, timeStamp) =>
 					await me(async () => {
-						const { value, lastModified } = await ((e, t, timeStamp) =>
+						const { value, lastModified } = await ((channel, t, timeStamp) =>
 							new Promise((resolve, reject) => {
 								const timer = setTimeout(() => reject(new DOMException(TIMED_OUT_ERROR)), 15e3)
-								e.send(
+								channel.send(
 									"userscripts",
 									{ action: "get", path: t, ifNotModifiedSince: timeStamp },
 									(result) => {
@@ -1148,7 +1148,7 @@
 									}
 								)
 							}))(channel, t, timeStamp)
-						console.log('File value', value)
+						// console.log('File value', value)
 						return new File([value || ""], e, { lastModified })
 					}
 					),
@@ -1193,23 +1193,22 @@
 			self.FileSystemFileHandle = FileSystemFileHandle
 			self.Worker = new Proxy(Worker, {
 				construct: (e, [t, r]) => {
-					console.log('Worker', e, t, r)
 					const workerInstance = new Worker(t, r)
-					let s
+					let ssss
 					return new Proxy(workerInstance, {
 						get: (target, type) =>
 							type === "postMessage"
 								? (param) => {
+									// console.log('postMessage', param)
 									const { method } = param
 									if ("listDirectory" !== method && "searchDirectory" !== method) {
-										console.log('searchDirectory', param)
 										workerInstance.postMessage(param)
 									}
 									else {
 										const { vsWorker, req, method } = param
 										setTimeout(() => {
-											s &&
-												s({
+											ssss &&
+												ssss({
 													data: {
 														vsWorker,
 														seq: req,
@@ -1226,19 +1225,19 @@
 									"removeEventListener",
 									"terminate",
 								].includes(type)
-									? "addEventListener" === type
-										? (e, callback) =>
-											"message" === e
-												? ((s = callback),
-													workerInstance.addEventListener(e, (e) => {
-														s && s(e)
+									? type === "addEventListener"
+										? (listenerType, callback) =>
+											"message" === listenerType
+												? ((ssss = callback),
+													workerInstance.addEventListener(listenerType, (e) => {
+														ssss && ssss(e)
 													}))
-												: workerInstance.addEventListener(e, callback)
+												: workerInstance.addEventListener(listenerType, callback)
 										: workerInstance[type].bind(workerInstance)
 									: Reflect.get(target, t),
 						set: (e, t, n) =>
 							"onmessage" === t && "function" == typeof n
-								? ((s = n), (workerInstance.onmessage = (e) => s && s(e)))
+								? ((ssss = n), (workerInstance.onmessage = (e) => ssss && ssss(e)))
 								: Reflect.set(e, t, n),
 					})
 				}
@@ -1259,23 +1258,8 @@
 					}
 				}, 500)
 			})
-			processor(() => {
-				let dom
-				const e = setInterval(() => {
-					dom = document.querySelector('iframe[id^="mc-monaco-editor"]')
-					if (dom) {
-						const monaco = dom.contentWindow.alleMonacoEditor
-						const content = monaco.getValue()
-						channel.send('userscripts', {
-							action: "set",
-							value: content,
-							lastModified: Date.now(),
-						})
-						clearInterval(e)
-					}
-				}, 500)
-			})
 			console.log("vscode-connector FileSystem registration finished")
-		})(window)
+		}
+		startWork(window)
 	})()
 })()
