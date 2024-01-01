@@ -1,0 +1,13 @@
+.vscode-open-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #25aff3;
+    font-size: 13px;
+    line-height: 18px;
+    height: 18px;
+    padding: 2px 6px 4px;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+}

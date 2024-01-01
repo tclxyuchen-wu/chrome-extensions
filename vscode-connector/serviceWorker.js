@@ -1,19 +1,11 @@
-; (() => {
+;(() => {
     "use strict"
-    let tempText = null
-    const {
-        storage,
-        runtime,
-        action,
-        tabs,
-        webNavigation,
-        scripting,
-    } = chrome
+    const { storage, runtime, action, tabs, webNavigation, scripting } = chrome
     let e
     Object.fromEntries
         ? (e = Object.fromEntries)
         : ((e = (e) => [...e].reduce((e, [t, a]) => ((e[t] = a), e), {})),
-            (Object.fromEntries = e))
+          (Object.fromEntries = e))
     let tCount = 0
     const changeListener = []
     const bindConsole = () => {
@@ -27,7 +19,10 @@
             tCount >= 60 && i.push(...a),
             tCount >= 30 && i.push(...n),
             r.forEach(
-                (e) => (verbose[e] = i.includes(e) ? console[e].bind(console) : () => { })
+                (e) =>
+                    (verbose[e] = i.includes(e)
+                        ? console[e].bind(console)
+                        : () => {})
             )
     }
     const verbose = {
@@ -40,25 +35,19 @@
         },
         get: () => tCount,
         get verbose() {
-            return (verbose.debug || (() => { })).bind(console)
+            return (verbose.debug || (() => {})).bind(console)
         },
-        debug: () => { },
-        log: () => { },
-        warn: () => { },
-        info: () => { },
-        error: () => { },
+        debug: () => {},
+        log: () => {},
+        warn: () => {},
+        info: () => {},
+        error: () => {},
         addChangeListener: (e) => {
             changeListener.push(e)
-        }
+        },
     }
     bindConsole()
-    const {
-        atob,
-        btoa,
-        clearTimeout,
-        setTimeout,
-        localStorage
-    } = self
+    const { atob, btoa, clearTimeout, setTimeout, localStorage } = self
     const CHROME_STORAGE = "chromeStorage"
     const VERSION = "version"
     const SCHEMA = "schema"
@@ -74,7 +63,7 @@
             keys: e,
             has: function (key) {
                 return !!t[key]
-            }
+            },
         }
     })()
     const execStorageMethod = async function (e, t) {
@@ -92,7 +81,9 @@
                     tMap[key] = value
                     const target = {}
                     target[key] = { origin, value }
-                    await new Promise((e) => storage.local.set(target, () => e()))
+                    await new Promise((e) =>
+                        storage.local.set(target, () => e())
+                    )
                 },
                 setValues: async (obj) => {
                     const target = {}
@@ -101,7 +92,9 @@
                         tMap[key] = value
                         target[key] = { origin, value }
                     })
-                    await new Promise((e) => storage.local.set(target, () => e()))
+                    await new Promise((e) =>
+                        storage.local.set(target, () => e())
+                    )
                 },
                 getValue: (key, value) => tMap[key] || value,
                 deleteAll: async () => {
@@ -113,24 +106,29 @@
                         }
                         return a
                     })(methods, createVersionObject.keys)
-                        ; (tMap = e),
-                            await new Promise((t) => {
-                                storage.local.clear(async () => {
-                                    await (async (e, t) => {
-                                        await Promise.all(
-                                            Object.getOwnPropertyNames(t).map(async (a) => {
-                                                void 0 !== t[a] && (await e.setValue(a, t[a]))
-                                            })
+                    ;(tMap = e),
+                        await new Promise((t) => {
+                            storage.local.clear(async () => {
+                                await (async (e, t) => {
+                                    await Promise.all(
+                                        Object.getOwnPropertyNames(t).map(
+                                            async (a) => {
+                                                void 0 !== t[a] &&
+                                                    (await e.setValue(a, t[a]))
+                                            }
                                         )
-                                    })(methods, e),
-                                        t()
-                                })
+                                    )
+                                })(methods, e),
+                                    t()
                             })
+                        })
                 },
                 deleteValue: async (e) => {
                     const a = e
                     delete tMap[a],
-                        await new Promise((e) => storage.local.remove(a, () => e()))
+                        await new Promise((e) =>
+                            storage.local.remove(a, () => e())
+                        )
                 },
                 listValues: () => {
                     const e = []
@@ -149,63 +147,77 @@
                             r = {}
                         r[s] = { origin: "normal", value: n }
                         const i = () => {
-                            d && clearTimeout(d), (d = null)
-                        },
+                                d && clearTimeout(d), (d = null)
+                            },
                             l = (e) => {
                                 ++a <= 5
                                     ? (verbose.warn(
-                                        "storage:",
-                                        e || "storage set/get test failed!"
-                                    ),
-                                        setTimeout(u, a * a * 100))
+                                          "storage:",
+                                          e || "storage set/get test failed!"
+                                      ),
+                                      setTimeout(u, a * a * 100))
                                     : (verbose.warn(
-                                        "storage: storage set/get test finally failed!"
-                                    ),
-                                        c())
+                                          "storage: storage set/get test finally failed!"
+                                      ),
+                                      c())
                             },
                             c = () => {
                                 d && (i(), t())
                             }
                         let d = setTimeout(() => {
-                            ; (d = null), c()
+                            ;(d = null), c()
                         }, 18e4)
                         const u = () => {
                             verbose.log("Storage: test -> start")
                             const t = Date.now()
                             storage.local.set(r, () => {
                                 verbose.log(
-                                    "Storage: test -> set after " + (Date.now() - t) + "ms"
+                                    "Storage: test -> set after " +
+                                        (Date.now() - t) +
+                                        "ms"
                                 ),
                                     storage.local.get(
                                         s,
                                         (a) => (
                                             verbose.log(
                                                 "Storage: test -> get after " +
-                                                (Date.now() - t) +
-                                                "ms"
+                                                    (Date.now() - t) +
+                                                    "ms"
                                             ),
                                             a && a[s]
                                                 ? a[s].value !== n
                                                     ? l(
-                                                        "read value is different " +
-                                                        JSON.stringify(a[s]) +
-                                                        " != " +
-                                                        JSON.stringify(n)
-                                                    )
+                                                          "read value is different " +
+                                                              JSON.stringify(
+                                                                  a[s]
+                                                              ) +
+                                                              " != " +
+                                                              JSON.stringify(n)
+                                                      )
                                                     : runtime.lastError
-                                                        ? l(
-                                                            (runtime.lastError && runtime.lastError.message) ||
-                                                            "lastError is set"
-                                                        )
-                                                        : void storage.local.remove(s, () => {
-                                                            verbose.log(
-                                                                "Storage: test -> remove after " +
-                                                                (Date.now() - t) +
-                                                                "ms"
-                                                            ),
-                                                                d && (i(), e())
-                                                        })
-                                                : l("read value is" + JSON.stringify(a))
+                                                    ? l(
+                                                          (runtime.lastError &&
+                                                              runtime.lastError
+                                                                  .message) ||
+                                                              "lastError is set"
+                                                      )
+                                                    : void storage.local.remove(
+                                                          s,
+                                                          () => {
+                                                              verbose.log(
+                                                                  "Storage: test -> remove after " +
+                                                                      (Date.now() -
+                                                                          t) +
+                                                                      "ms"
+                                                              ),
+                                                                  d &&
+                                                                      (i(), e())
+                                                          }
+                                                      )
+                                                : l(
+                                                      "read value is" +
+                                                          JSON.stringify(a)
+                                                  )
                                         )
                                     )
                             })
@@ -218,16 +230,16 @@
                     if (!isInited) {
                         isInited = true
                         const a = (e) => {
-                            ; (tMap = {}),
+                            ;(tMap = {}),
                                 e &&
-                                Object.keys(e).forEach((a) => {
-                                    const n = e[a]
-                                    n &&
+                                    Object.keys(e).forEach((a) => {
+                                        const n = e[a]
+                                        n &&
                                         n.hasOwnProperty("origin") &&
                                         n.hasOwnProperty("value")
-                                        ? (tMap[a] = n.value)
-                                        : (tMap[a] = n)
-                                })
+                                            ? (tMap[a] = n.value)
+                                            : (tMap[a] = n)
+                                    })
                         }
                         await new Promise((e) =>
                             storage.local.get(null, (t) => {
@@ -249,14 +261,14 @@
         storageMethods
             ? (storageMethods.isWorking || Promise.resolve)()
             : new Promise((e, t) => {
-                setTimeout(async () => {
-                    try {
-                        await isWorking(), e()
-                    } catch (e) {
-                        t()
-                    }
-                }, 1e3)
-            })
+                  setTimeout(async () => {
+                      try {
+                          await isWorking(), e()
+                      } catch (e) {
+                          t()
+                      }
+                  }, 1e3)
+              })
     const storageFactory = {
         secure: {},
         setValue: (e, t) => storageMethods.setValue(e, t),
@@ -295,7 +307,8 @@
         factoryReset: () => storageFactory.deleteAll(),
         isWiped: async () => false,
         setVersion: async (e, t) => {
-            await storageFactory.setValue(VERSION, e), t && (await storageFactory.setValue(SCHEMA, t))
+            await storageFactory.setValue(VERSION, e),
+                t && (await storageFactory.setValue(SCHEMA, t))
         },
         getVersion: async (e) => (await storageFactory.getValue(VERSION)) || e,
         getSchemaVersion: () => storageFactory.getValue(SCHEMA, "1.0"),
@@ -322,51 +335,55 @@
         let storageData = storageFactory.getValue(CONFIG, {})
         return (
             storageData instanceof Object || (storageData = {}),
-            void 0 !== (t = storageData[key]) ? t : "function" == typeof (t = config[key]) ? t() : t
+            void 0 !== (t = storageData[key])
+                ? t
+                : "function" == typeof (t = config[key])
+                ? t()
+                : t
         )
     }
     const setConfig = (key, value) => {
-        let storageData = storageFactory.getValue(CONFIG, {});
-        if (typeof storageData !== 'object') {
-            storageData = {};
+        let storageData = storageFactory.getValue(CONFIG, {})
+        if (typeof storageData !== "object") {
+            storageData = {}
         }
         if (!(storageConfig instanceof Object)) {
-            storageData = {};
+            storageData = {}
         }
-        const oldValue = getConfig(key);
-        storageData[key] = value;
-        const saveResult = storageFactory.setValue(CONFIG, storageData);
-        const listeners = Z[key];
+        const oldValue = getConfig(key)
+        storageData[key] = value
+        const saveResult = storageFactory.setValue(CONFIG, storageData)
+        const listeners = Z[key]
         if (listeners && JSON.stringify(oldValue) !== JSON.stringify(value)) {
-            listeners.forEach(listener => {
+            listeners.forEach((listener) => {
                 try {
-                    listener(key, oldValue, value, saveResult);
+                    listener(key, oldValue, value, saveResult)
                 } catch (error) {
-                    verbose.warn('config: changeListener error', error);
+                    verbose.warn("config: changeListener error", error)
                 }
-            });
+            })
         }
-        return saveResult;
+        return saveResult
     }
     let localStorageData = {}
     try {
         const value = localStorage.getItem(SESSION)
         localStorageData = JSON.parse(atob(value))
-    } catch (e) { }
+    } catch (e) {}
     const getListener = (e) => localStorageData[e] || listenerObj[e]
     const setListener = (e, t) => {
         const listener = getListener(e)
         void 0 === t ? delete localStorageData[e] : (localStorageData[e] = t),
             localStorage &&
-            localStorage.setItem(
-                SESSION,
-                ((e) => {
-                    let t = ""
-                    for (let a = 0;a < e.length;a++)
-                        t += String.fromCharCode(255 & e.charCodeAt(a))
-                    return btoa(t)
-                })(JSON.stringify(localStorageData))
-            )
+                localStorage.setItem(
+                    SESSION,
+                    ((e) => {
+                        let t = ""
+                        for (let a = 0; a < e.length; a++)
+                            t += String.fromCharCode(255 & e.charCodeAt(a))
+                        return btoa(t)
+                    })(JSON.stringify(localStorageData))
+                )
         const n = Z[e]
         n &&
             JSON.stringify(listener) != JSON.stringify(t) &&
@@ -415,38 +432,64 @@
             listenerFactory.values = e
             listenerFactory.initialized = true
         },
-        getValue: (e) => (listenerObj.hasOwnProperty(e) ? getListener(e) : getConfig(e)),
+        getValue: (e) =>
+            listenerObj.hasOwnProperty(e) ? getListener(e) : getConfig(e),
         setValue: async (e, t) =>
-            listenerObj.hasOwnProperty(e) ? await setListener(e, t) : await setConfig(e, t),
+            listenerObj.hasOwnProperty(e)
+                ? await setListener(e, t)
+                : await setConfig(e, t),
         getDefaults: () => config,
         addChangeListener: (e, t) => {
             var a
-                ; ((a = e), Array.isArray(a) ? a : [a]).forEach((e) => {
-                    let a = Z[e]
-                    a || (a = Z[e] = []), a.push(t)
-                })
+            ;((a = e), Array.isArray(a) ? a : [a]).forEach((e) => {
+                let a = Z[e]
+                a || (a = Z[e] = []), a.push(t)
+            })
         },
     }
-    const editorUrl = "https://vscode.dev/?connectTo=";
-    (async (e) => {
-        (e.oninstall = () => e.skipWaiting())
+    const wait = (delay = 1000) => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve()
+            }, delay)
+        })
+    }
+    const editorUrl = "https://vscode.dev/?connectTo="
+    ;(async (e) => {
+        e.oninstall = () => e.skipWaiting()
         webNavigation.onCommitted.addListener((e) => {
-            const { url, tabId: a } = e
+            const { url, tabId } = e
             // if (url.startsWith(editorUrl)) {
             //     return
             // }
             scripting.executeScript({
-                files: ["forward.js"],
-                target: { tabId: a, frameIds: [0] },
+                files: ["birdge.js"],
+                target: { tabId, frameIds: [0] },
                 injectImmediately: true,
                 world: "ISOLATED",
             })
-            scripting.executeScript({
-                files: ["page.js"],
-                target: { tabId: a, frameIds: [0] },
-                injectImmediately: true,
-                world: "MAIN",
-            })
+            if (url.indexOf("vscode.dev") > -1) {
+                scripting.executeScript({
+                    files: ["vscodePage.js"],
+                    target: { tabId, frameIds: [0] },
+                    injectImmediately: true,
+                    world: "MAIN",
+                })
+            } else {
+                scripting.executeScript({
+                    files: ["monacoPage.js"],
+                    target: { tabId, frameIds: [0] },
+                    injectImmediately: true,
+                    world: "MAIN",
+                })
+                scripting.insertCSS({
+                    files: ["page.css"],
+                    target: {
+                        tabId,
+                        frameIds: [0],
+                    },
+                })
+            }
         })
 
         const createMessageChannel = async (message, sendResponse) => {
@@ -458,7 +501,10 @@
             setup = new Promise((e) => (promiseFn = e))
             setup.then(() => (setup = void 0))
             const getExtensions = async (activeUrls) => {
-                const list = K.length && K.includes(runtimeId) ? listenerFactory.values.externalExtensionIds : externalExtensionIds
+                const list =
+                    K.length && K.includes(runtimeId)
+                        ? listenerFactory.values.externalExtensionIds
+                        : externalExtensionIds
                 await Promise.all(
                     list.map((key) => {
                         if (portObj[key] === void 0) {
@@ -466,7 +512,9 @@
                             return new Promise((resolve) => {
                                 try {
                                     const port = runtime.connect(key)
-                                    const messageId = Math.random().toString(36).substr(2, 5)
+                                    const messageId = Math.random()
+                                        .toString(36)
+                                        .substr(2, 5)
                                     port.postMessage({
                                         method: "userscripts",
                                         action: "options",
@@ -475,19 +523,27 @@
                                     })
                                     port.onMessage.addListener((e) => {
                                         runtime.lastError,
-                                            e || (delete portObj[key], port.disconnect()),
+                                            e ||
+                                                (delete portObj[key],
+                                                port.disconnect()),
                                             e &&
-                                            e.messageId === messageId &&
-                                            e.allow &&
-                                            e.allow.includes("list") &&
-                                            (portObj[key] = port),
+                                                e.messageId === messageId &&
+                                                e.allow &&
+                                                e.allow.includes("list") &&
+                                                (portObj[key] = port),
                                             resolve()
                                     })
                                     port.onDisconnect.addListener(() => {
-                                        runtime.lastError, delete portObj[key], resolve()
+                                        runtime.lastError,
+                                            delete portObj[key],
+                                            resolve()
                                     })
                                 } catch (e) {
-                                    verbose.debug(`unable to talk to ${key}`, e), resolve()
+                                    verbose.debug(
+                                        `unable to talk to ${key}`,
+                                        e
+                                    ),
+                                        resolve()
                                 }
                             })
                         }
@@ -498,12 +554,15 @@
                     .map((key) => ({ id: key, port: portObj[key] }))
             }
             const extensions = await getExtensions([editorUrl])
-            if (!extensions.length) return sendResponse({ error: "no extension to talk to" }), void promiseFn()
+            if (!extensions.length)
+                return (
+                    sendResponse({ error: "no extension to talk to" }),
+                    void promiseFn()
+                )
             const [{ id, port }] = extensions
             verbose.log(`Found extension ${id}`)
             const listenerFn = (e) => {
                 sendResponse(e)
-                console.log('listenerFn', e)
                 port.onMessage.removeListener(listenerFn)
                 promiseFn()
             }
@@ -516,46 +575,61 @@
             setup = void 0
         }
 
-        const createAllMessage = async (message, sendResponse) => {
-            console.log('createAllMessage', message)
-            let mockData
-            const { method, args } = message
-            const { action } = args
-            if (action === 'list') {
-                mockData = {
+        const createAlleMessageChannel = async (message, sendResponse) => {
+            let result
+            const { messageType, args } = message
+            const { action, tabId } = args
+            const sendMessage = () => {
+                return tabs.sendMessage(Number(tabId), {
+                    messageType: "userscripts",
+                    args,
+                })
+            }
+            if (action === "list") {
+                result = {
                     list: [
                         {
-                            "namespace": "万象编辑器",
-                            "name": "script",
-                            "path": "6b954ad4-6aa1-445d-99b9-16bc42378f3c/source",
-                            "requires": []
-                        }
-                    ]
+                            namespace: "万象编辑器",
+                            name: "script",
+                            path: "6b954ad4-6aa1-445d-99b9-16bc42378f3c/source",
+                            requires: [],
+                        },
+                    ],
                 }
             }
-            if (action === 'get') {
-                console.log('getgetget', tempText)
-                mockData = tempText
+            if (action === "get") {
+                let res
+                res = await sendMessage()
+                if (!res) {
+                    await wait(200)
+                    res = await sendMessage()
+                }
+                res && (result = res.args)
             }
-            if (action === 'set') {
-                console.log('ssetetssetetssetet', args)
-                tempText = args
+            if (action === "patch") {
+                console.log('path')
+                sendMessage()
+                return
             }
-            sendResponse(mockData)
+            if (action === "openVscode") {
+                const [{ id }] = await tabs.query({ active: true })
+                tabs.create({ url: editorUrl + id, active: true }, () => runtime.lastError)
+            }
+            sendResponse(result)
         }
         runtime.onMessage.addListener((message, sender, sendResponse) => {
             // createMessageChannel(message, sendResponse)
-            createAllMessage(message, sendResponse)
+            createAlleMessageChannel(message, sendResponse)
             return true
         })
-        action.onClicked.addListener(() => {
-            runtime.lastError,
-                tabs.query({ url: editorUrl + "*" }, (e) => {
-                    e && e.length && e[0].id
-                        ? tabs.update(e[0].id, { active: true }, () => runtime.lastError)
-                        : tabs.create({ url: editorUrl, active: true }, () => runtime.lastError)
-                })
-        })
+        // action.onClicked.addListener(() => {
+        //     runtime.lastError,
+        //         tabs.query({ url: editorUrl + "*" }, (e) => {
+        //             e && e.length && e[0].id
+        //                 ? tabs.update(e[0].id, { active: true }, () => runtime.lastError)
+        //                 : tabs.create({ url: editorUrl, active: true }, () => runtime.lastError)
+        //         })
+        // })
         let setup = (async () => {
             await storageFactory.init()
             await listenerFactory.init()
