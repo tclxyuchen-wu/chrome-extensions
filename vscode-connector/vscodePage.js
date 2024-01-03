@@ -872,7 +872,7 @@
 		const correctReplacer = (e) => ({ "/": "∕", "\\": "⑊" }[e] || e)
 		const slashReplacer = (e) => e.replace(/[/:\\]/g, correctReplacer)
 		const urlParams = new URLSearchParams(location.search)
-		const tabId = urlParams.get('connectTo')
+		const tabId = urlParams.get('tabId')
 		let pe
 		const me = (e) => {
 			const t = async () => {
@@ -1139,6 +1139,7 @@
 						const { value, lastModified } = await ((channel, path, timeStamp) =>
 							new Promise((resolve, reject) => {
 								const timer = setTimeout(() => reject(new DOMException(TIMED_OUT_ERROR)), 15e3)
+								console.log('get-userscripts')
 								channel.send(
 									"userscripts",
 									{ action: "get", path, ifNotModifiedSince: timeStamp },

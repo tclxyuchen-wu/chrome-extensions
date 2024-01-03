@@ -176,8 +176,8 @@
 				let promiseStatus
 				runtime.onMessage.addListener((message, sender, sendResponse) => {
 					const { messageType, args } = message
+					const { action, path } = args
 					if (messageType !== 'userscripts') return
-					const { action } = args
 					if (action === 'get') {
 						if (temp) {
 							sendResponse(temp)
@@ -194,6 +194,7 @@
 						})
 					}
 					if (action === 'patch') {
+						console.log('path')
 						window.postMessage(message, '*')
 					}
 				})

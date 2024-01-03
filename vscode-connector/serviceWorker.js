@@ -1,13 +1,24 @@
-;(() => {
+; (() => {
     "use strict"
     const { storage, runtime, action, tabs, webNavigation, scripting } = chrome
     let e
     Object.fromEntries
         ? (e = Object.fromEntries)
         : ((e = (e) => [...e].reduce((e, [t, a]) => ((e[t] = a), e), {})),
-          (Object.fromEntries = e))
+            (Object.fromEntries = e))
     let tCount = 0
     const changeListener = []
+    function throttle(func, delay) {
+        let timerId;
+        return function (...args) {
+            if (!timerId) {
+                timerId = setTimeout(() => {
+                    func.apply(this, args)
+                    timerId = null
+                }, delay)
+            }
+        }
+    }
     const bindConsole = () => {
         const e = ["debug"],
             a = ["log"],
@@ -20,9 +31,9 @@
             tCount >= 30 && i.push(...n),
             r.forEach(
                 (e) =>
-                    (verbose[e] = i.includes(e)
-                        ? console[e].bind(console)
-                        : () => {})
+                (verbose[e] = i.includes(e)
+                    ? console[e].bind(console)
+                    : () => { })
             )
     }
     const verbose = {
@@ -35,13 +46,13 @@
         },
         get: () => tCount,
         get verbose() {
-            return (verbose.debug || (() => {})).bind(console)
+            return (verbose.debug || (() => { })).bind(console)
         },
-        debug: () => {},
-        log: () => {},
-        warn: () => {},
-        info: () => {},
-        error: () => {},
+        debug: () => { },
+        log: () => { },
+        warn: () => { },
+        info: () => { },
+        error: () => { },
         addChangeListener: (e) => {
             changeListener.push(e)
         },
@@ -106,22 +117,22 @@
                         }
                         return a
                     })(methods, createVersionObject.keys)
-                    ;(tMap = e),
-                        await new Promise((t) => {
-                            storage.local.clear(async () => {
-                                await (async (e, t) => {
-                                    await Promise.all(
-                                        Object.getOwnPropertyNames(t).map(
-                                            async (a) => {
-                                                void 0 !== t[a] &&
-                                                    (await e.setValue(a, t[a]))
-                                            }
+                        ; (tMap = e),
+                            await new Promise((t) => {
+                                storage.local.clear(async () => {
+                                    await (async (e, t) => {
+                                        await Promise.all(
+                                            Object.getOwnPropertyNames(t).map(
+                                                async (a) => {
+                                                    void 0 !== t[a] &&
+                                                        (await e.setValue(a, t[a]))
+                                                }
+                                            )
                                         )
-                                    )
-                                })(methods, e),
-                                    t()
+                                    })(methods, e),
+                                        t()
+                                })
                             })
-                        })
                 },
                 deleteValue: async (e) => {
                     const a = e
@@ -147,25 +158,25 @@
                             r = {}
                         r[s] = { origin: "normal", value: n }
                         const i = () => {
-                                d && clearTimeout(d), (d = null)
-                            },
+                            d && clearTimeout(d), (d = null)
+                        },
                             l = (e) => {
                                 ++a <= 5
                                     ? (verbose.warn(
-                                          "storage:",
-                                          e || "storage set/get test failed!"
-                                      ),
-                                      setTimeout(u, a * a * 100))
+                                        "storage:",
+                                        e || "storage set/get test failed!"
+                                    ),
+                                        setTimeout(u, a * a * 100))
                                     : (verbose.warn(
-                                          "storage: storage set/get test finally failed!"
-                                      ),
-                                      c())
+                                        "storage: storage set/get test finally failed!"
+                                    ),
+                                        c())
                             },
                             c = () => {
                                 d && (i(), t())
                             }
                         let d = setTimeout(() => {
-                            ;(d = null), c()
+                            ; (d = null), c()
                         }, 18e4)
                         const u = () => {
                             verbose.log("Storage: test -> start")
@@ -173,51 +184,51 @@
                             storage.local.set(r, () => {
                                 verbose.log(
                                     "Storage: test -> set after " +
-                                        (Date.now() - t) +
-                                        "ms"
+                                    (Date.now() - t) +
+                                    "ms"
                                 ),
                                     storage.local.get(
                                         s,
                                         (a) => (
                                             verbose.log(
                                                 "Storage: test -> get after " +
-                                                    (Date.now() - t) +
-                                                    "ms"
+                                                (Date.now() - t) +
+                                                "ms"
                                             ),
                                             a && a[s]
                                                 ? a[s].value !== n
                                                     ? l(
-                                                          "read value is different " +
-                                                              JSON.stringify(
-                                                                  a[s]
-                                                              ) +
-                                                              " != " +
-                                                              JSON.stringify(n)
-                                                      )
+                                                        "read value is different " +
+                                                        JSON.stringify(
+                                                            a[s]
+                                                        ) +
+                                                        " != " +
+                                                        JSON.stringify(n)
+                                                    )
                                                     : runtime.lastError
-                                                    ? l(
-                                                          (runtime.lastError &&
-                                                              runtime.lastError
-                                                                  .message) ||
-                                                              "lastError is set"
-                                                      )
-                                                    : void storage.local.remove(
-                                                          s,
-                                                          () => {
-                                                              verbose.log(
-                                                                  "Storage: test -> remove after " +
-                                                                      (Date.now() -
-                                                                          t) +
-                                                                      "ms"
-                                                              ),
-                                                                  d &&
-                                                                      (i(), e())
-                                                          }
-                                                      )
+                                                        ? l(
+                                                            (runtime.lastError &&
+                                                                runtime.lastError
+                                                                    .message) ||
+                                                            "lastError is set"
+                                                        )
+                                                        : void storage.local.remove(
+                                                            s,
+                                                            () => {
+                                                                verbose.log(
+                                                                    "Storage: test -> remove after " +
+                                                                    (Date.now() -
+                                                                        t) +
+                                                                    "ms"
+                                                                ),
+                                                                    d &&
+                                                                    (i(), e())
+                                                            }
+                                                        )
                                                 : l(
-                                                      "read value is" +
-                                                          JSON.stringify(a)
-                                                  )
+                                                    "read value is" +
+                                                    JSON.stringify(a)
+                                                )
                                         )
                                     )
                             })
@@ -230,16 +241,16 @@
                     if (!isInited) {
                         isInited = true
                         const a = (e) => {
-                            ;(tMap = {}),
+                            ; (tMap = {}),
                                 e &&
-                                    Object.keys(e).forEach((a) => {
-                                        const n = e[a]
-                                        n &&
+                                Object.keys(e).forEach((a) => {
+                                    const n = e[a]
+                                    n &&
                                         n.hasOwnProperty("origin") &&
                                         n.hasOwnProperty("value")
-                                            ? (tMap[a] = n.value)
-                                            : (tMap[a] = n)
-                                    })
+                                        ? (tMap[a] = n.value)
+                                        : (tMap[a] = n)
+                                })
                         }
                         await new Promise((e) =>
                             storage.local.get(null, (t) => {
@@ -261,14 +272,14 @@
         storageMethods
             ? (storageMethods.isWorking || Promise.resolve)()
             : new Promise((e, t) => {
-                  setTimeout(async () => {
-                      try {
-                          await isWorking(), e()
-                      } catch (e) {
-                          t()
-                      }
-                  }, 1e3)
-              })
+                setTimeout(async () => {
+                    try {
+                        await isWorking(), e()
+                    } catch (e) {
+                        t()
+                    }
+                }, 1e3)
+            })
     const storageFactory = {
         secure: {},
         setValue: (e, t) => storageMethods.setValue(e, t),
@@ -338,8 +349,8 @@
             void 0 !== (t = storageData[key])
                 ? t
                 : "function" == typeof (t = config[key])
-                ? t()
-                : t
+                    ? t()
+                    : t
         )
     }
     const setConfig = (key, value) => {
@@ -369,21 +380,21 @@
     try {
         const value = localStorage.getItem(SESSION)
         localStorageData = JSON.parse(atob(value))
-    } catch (e) {}
+    } catch (e) { }
     const getListener = (e) => localStorageData[e] || listenerObj[e]
     const setListener = (e, t) => {
         const listener = getListener(e)
         void 0 === t ? delete localStorageData[e] : (localStorageData[e] = t),
             localStorage &&
-                localStorage.setItem(
-                    SESSION,
-                    ((e) => {
-                        let t = ""
-                        for (let a = 0; a < e.length; a++)
-                            t += String.fromCharCode(255 & e.charCodeAt(a))
-                        return btoa(t)
-                    })(JSON.stringify(localStorageData))
-                )
+            localStorage.setItem(
+                SESSION,
+                ((e) => {
+                    let t = ""
+                    for (let a = 0;a < e.length;a++)
+                        t += String.fromCharCode(255 & e.charCodeAt(a))
+                    return btoa(t)
+                })(JSON.stringify(localStorageData))
+            )
         const n = Z[e]
         n &&
             JSON.stringify(listener) != JSON.stringify(t) &&
@@ -441,10 +452,10 @@
         getDefaults: () => config,
         addChangeListener: (e, t) => {
             var a
-            ;((a = e), Array.isArray(a) ? a : [a]).forEach((e) => {
-                let a = Z[e]
-                a || (a = Z[e] = []), a.push(t)
-            })
+                ; ((a = e), Array.isArray(a) ? a : [a]).forEach((e) => {
+                    let a = Z[e]
+                    a || (a = Z[e] = []), a.push(t)
+                })
         },
     }
     const wait = (delay = 1000) => {
@@ -454,189 +465,180 @@
             }, delay)
         })
     }
-    const editorUrl = "https://vscode.dev/?connectTo="
-    ;(async (e) => {
-        e.oninstall = () => e.skipWaiting()
-        webNavigation.onCommitted.addListener((e) => {
-            const { url, tabId } = e
-            // if (url.startsWith(editorUrl)) {
-            //     return
-            // }
-            scripting.executeScript({
-                files: ["birdge.js"],
-                target: { tabId, frameIds: [0] },
-                injectImmediately: true,
-                world: "ISOLATED",
+    const editorUrl = "https://vscode.dev/?connectTo=tc"
+        ; (async (e) => {
+            e.oninstall = () => e.skipWaiting()
+            webNavigation.onCommitted.addListener((e) => {
+                const { url, tabId, frameId } = e
+                scripting.executeScript({
+                    files: ["birdge.js"],
+                    target: { tabId, frameIds: [frameId] },
+                    injectImmediately: true,
+                    world: "ISOLATED",
+                })
+                if (url.indexOf("vscode.dev") > -1) {
+                    scripting.executeScript({
+                        files: ["vscodePage.js"],
+                        target: { tabId, frameIds: [0] },
+                        injectImmediately: true,
+                        world: "MAIN",
+                    })
+                } else {
+                    scripting.executeScript({
+                        files: ["monacoPage.js"],
+                        target: { tabId, frameIds: [frameId] },
+                        injectImmediately: true,
+                        world: "MAIN",
+                    })
+                }
             })
-            if (url.indexOf("vscode.dev") > -1) {
-                scripting.executeScript({
-                    files: ["vscodePage.js"],
-                    target: { tabId, frameIds: [0] },
-                    injectImmediately: true,
-                    world: "MAIN",
-                })
-            } else {
-                scripting.executeScript({
-                    files: ["monacoPage.js"],
-                    target: { tabId, frameIds: [0] },
-                    injectImmediately: true,
-                    world: "MAIN",
-                })
-                scripting.insertCSS({
-                    files: ["page.css"],
-                    target: {
-                        tabId,
-                        frameIds: [0],
-                    },
-                })
-            }
-        })
 
-        const createMessageChannel = async (message, sendResponse) => {
-            if (setup) {
-                await setup
-                return createMessageChannel(message, sendResponse)
-            }
-            let promiseFn = () => null
-            setup = new Promise((e) => (promiseFn = e))
-            setup.then(() => (setup = void 0))
-            const getExtensions = async (activeUrls) => {
-                const list =
-                    K.length && K.includes(runtimeId)
-                        ? listenerFactory.values.externalExtensionIds
-                        : externalExtensionIds
-                await Promise.all(
-                    list.map((key) => {
-                        if (portObj[key] === void 0) {
-                            portObj[key] = false
-                            return new Promise((resolve) => {
-                                try {
-                                    const port = runtime.connect(key)
-                                    const messageId = Math.random()
-                                        .toString(36)
-                                        .substr(2, 5)
-                                    port.postMessage({
-                                        method: "userscripts",
-                                        action: "options",
-                                        messageId,
-                                        activeUrls,
-                                    })
-                                    port.onMessage.addListener((e) => {
-                                        runtime.lastError,
-                                            e ||
+            const createMessageChannel = async (message, sendResponse) => {
+                if (setup) {
+                    await setup
+                    return createMessageChannel(message, sendResponse)
+                }
+                let promiseFn = () => null
+                setup = new Promise((e) => (promiseFn = e))
+                setup.then(() => (setup = void 0))
+                const getExtensions = async (activeUrls) => {
+                    const list =
+                        K.length && K.includes(runtimeId)
+                            ? listenerFactory.values.externalExtensionIds
+                            : externalExtensionIds
+                    await Promise.all(
+                        list.map((key) => {
+                            if (portObj[key] === void 0) {
+                                portObj[key] = false
+                                return new Promise((resolve) => {
+                                    try {
+                                        const port = runtime.connect(key)
+                                        const messageId = Math.random()
+                                            .toString(36)
+                                            .substr(2, 5)
+                                        port.postMessage({
+                                            method: "userscripts",
+                                            action: "options",
+                                            messageId,
+                                            activeUrls,
+                                        })
+                                        port.onMessage.addListener((e) => {
+                                            runtime.lastError,
+                                                e ||
                                                 (delete portObj[key],
-                                                port.disconnect()),
-                                            e &&
+                                                    port.disconnect()),
+                                                e &&
                                                 e.messageId === messageId &&
                                                 e.allow &&
                                                 e.allow.includes("list") &&
                                                 (portObj[key] = port),
+                                                resolve()
+                                        })
+                                        port.onDisconnect.addListener(() => {
+                                            runtime.lastError,
+                                                delete portObj[key],
+                                                resolve()
+                                        })
+                                    } catch (e) {
+                                        verbose.debug(
+                                            `unable to talk to ${key}`,
+                                            e
+                                        ),
                                             resolve()
-                                    })
-                                    port.onDisconnect.addListener(() => {
-                                        runtime.lastError,
-                                            delete portObj[key],
-                                            resolve()
-                                    })
-                                } catch (e) {
-                                    verbose.debug(
-                                        `unable to talk to ${key}`,
-                                        e
-                                    ),
-                                        resolve()
-                                }
-                            })
-                        }
+                                    }
+                                })
+                            }
+                        })
+                    )
+                    return Object.keys(portObj)
+                        .filter((key) => portObj[key] !== false)
+                        .map((key) => ({ id: key, port: portObj[key] }))
+                }
+                const extensions = await getExtensions([editorUrl])
+                if (!extensions.length)
+                    return (
+                        sendResponse({ error: "no extension to talk to" }),
+                        void promiseFn()
+                    )
+                const [{ id, port }] = extensions
+                verbose.log(`Found extension ${id}`)
+                const listenerFn = (e) => {
+                    sendResponse(e)
+                    port.onMessage.removeListener(listenerFn)
+                    promiseFn()
+                }
+                port.onMessage.addListener(listenerFn)
+                port.postMessage({
+                    method: message.method,
+                    ...message.args,
+                })
+                await setup
+                setup = void 0
+            }
+
+            const createAlleMessageChannel = async (message, sendResponse) => {
+                let result
+                const { messageType, args } = message
+                const { action, tabId } = args
+                const sendMessage = () => {
+                    return tabs.sendMessage(Number(tabId), {
+                        messageType: "userscripts",
+                        args,
                     })
-                )
-                return Object.keys(portObj)
-                    .filter((key) => portObj[key] !== false)
-                    .map((key) => ({ id: key, port: portObj[key] }))
+                }
+                if (action === "list") {
+                    result = {
+                        list: [
+                            {
+                                namespace: "万象编辑器",
+                                name: "script",
+                                path: "6b954ad4-6aa1-445d-99b9-16bc42378f3c/source",
+                                requires: [],
+                            },
+                        ],
+                    }
+                }
+                if (action === "get") {
+                    let res
+                    res = await sendMessage()
+                    if (!res) {
+                        await wait(200)
+                        res = await sendMessage()
+                    }
+                    res && (result = res.args)
+                }
+                if (action === "patch") {
+                    console.log('patch')
+                    sendMessage()
+                    return
+                }
+                if (action === "openVscode") {
+                    const [{ id }] = await tabs.query({ active: true })
+                    tabs.create({ url: `${editorUrl}&tabId=${id}`, active: true }, () => runtime.lastError)
+                }
+                sendResponse(result)
             }
-            const extensions = await getExtensions([editorUrl])
-            if (!extensions.length)
-                return (
-                    sendResponse({ error: "no extension to talk to" }),
-                    void promiseFn()
-                )
-            const [{ id, port }] = extensions
-            verbose.log(`Found extension ${id}`)
-            const listenerFn = (e) => {
-                sendResponse(e)
-                port.onMessage.removeListener(listenerFn)
-                promiseFn()
-            }
-            port.onMessage.addListener(listenerFn)
-            port.postMessage({
-                method: message.method,
-                ...message.args,
+            runtime.onMessage.addListener((message, sender, sendResponse) => {
+                console.log('onMessage', sender)
+                // createMessageChannel(message, sendResponse)
+                createAlleMessageChannel(message, sendResponse)
+                return true
             })
+            // action.onClicked.addListener(() => {
+            //     runtime.lastError,
+            //         tabs.query({ url: editorUrl + "*" }, (e) => {
+            //             e && e.length && e[0].id
+            //                 ? tabs.update(e[0].id, { active: true }, () => runtime.lastError)
+            //                 : tabs.create({ url: editorUrl, active: true }, () => runtime.lastError)
+            //         })
+            // })
+            let setup = (async () => {
+                await storageFactory.init()
+                await listenerFactory.init()
+                verbose.set(listenerFactory.values.logLevel)
+            })()
             await setup
             setup = void 0
-        }
-
-        const createAlleMessageChannel = async (message, sendResponse) => {
-            let result
-            const { messageType, args } = message
-            const { action, tabId } = args
-            const sendMessage = () => {
-                return tabs.sendMessage(Number(tabId), {
-                    messageType: "userscripts",
-                    args,
-                })
-            }
-            if (action === "list") {
-                result = {
-                    list: [
-                        {
-                            namespace: "万象编辑器",
-                            name: "script",
-                            path: "6b954ad4-6aa1-445d-99b9-16bc42378f3c/source",
-                            requires: [],
-                        },
-                    ],
-                }
-            }
-            if (action === "get") {
-                let res
-                res = await sendMessage()
-                if (!res) {
-                    await wait(200)
-                    res = await sendMessage()
-                }
-                res && (result = res.args)
-            }
-            if (action === "patch") {
-                console.log('path')
-                sendMessage()
-                return
-            }
-            if (action === "openVscode") {
-                const [{ id }] = await tabs.query({ active: true })
-                tabs.create({ url: editorUrl + id, active: true }, () => runtime.lastError)
-            }
-            sendResponse(result)
-        }
-        runtime.onMessage.addListener((message, sender, sendResponse) => {
-            // createMessageChannel(message, sendResponse)
-            createAlleMessageChannel(message, sendResponse)
-            return true
-        })
-        // action.onClicked.addListener(() => {
-        //     runtime.lastError,
-        //         tabs.query({ url: editorUrl + "*" }, (e) => {
-        //             e && e.length && e[0].id
-        //                 ? tabs.update(e[0].id, { active: true }, () => runtime.lastError)
-        //                 : tabs.create({ url: editorUrl, active: true }, () => runtime.lastError)
-        //         })
-        // })
-        let setup = (async () => {
-            await storageFactory.init()
-            await listenerFactory.init()
-            verbose.set(listenerFactory.values.logLevel)
-        })()
-        await setup
-        setup = void 0
-        verbose.log("vscode-connector initialization done")
-    })(self)
+            verbose.log("vscode-connector initialization done")
+        })(self)
 })()

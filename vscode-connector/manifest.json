@@ -11,21 +11,22 @@
       "service_worker": "serviceWorker.js"
    },
    "default_locale": "en",
-   "description": "connect vscode & other editor",
+   "description": "connect vscode & monaco-editor",
    "host_permissions": [
       "https://*.vscode.dev/*",
       "http://127.0.0.1:5173/*",
+      "http://localhost:8081/*",
       "http://tcwireless.t.17usoft.com/*",
       "http://tcwireless.17usoft.com/*",
       "https://tcwireless.t.17usoft.com/*",
-      "https://tcwireless.17usoft.com/*"
+      "https://tcwireless.17usoft.com/*",
+      "https://microsoft.github.io/*"
    ],
    "icons": {
       "128": "images/vscode.png",
       "16": "images/vscode.png",
       "48": "images/vscode.png"
    },
-   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyjSl1B4k7QuNmuTG1VuLXVeefNS4n2J3KsMnj3yZqLIAtlhoyLFxV0lSvdVUQU3SGna4G+7gVmxjnmCN4BoLXEsMMKQU6of0Th/NB+Gq2t4gcy5vXsx8cv8XQA37sZ5TwR70YAStgFDvQDLoVedV+URNcKGKEBV9kRl99JLY+NXpUjyg63Is5mUlZrCmlGmo1y83dKC6MmVNVX1uxCFhVoD1R8zSFf51L+eXwjMTwdBVw2/PpcW3Q07l69cJTjgvDPQCf2S6YzAg78oN1LvAahkPSvf8jbujXDItyMEAJ+SugY69UQdrHc7OlYpld+NfZBiB2HnqYUFl27JadL/ydQIDAQAB",
    "manifest_version": 3,
    "minimum_chrome_version": "102.0.0.0",
    "name": "vscode-connector",
